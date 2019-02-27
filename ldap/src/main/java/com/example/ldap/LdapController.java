@@ -9,7 +9,7 @@ public class LdapController {
 
     @RequestMapping(value = "/index")
     public String index() {
-        return "";
+        return "index";
     }
 
     @RequestMapping(value = "/login", method = {RequestMethod.POST})

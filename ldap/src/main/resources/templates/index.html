@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<script>
+    window.onload = function (ev) {
+        alert("hello");
+    }
+</script>
+<div class="wrapper">
+    <form class="form-signin">
+        <h2 class="form-signin-heading">Please login</h2>
+        <input autofocus="" class="form-control" name="username" placeholder="UserId" required="" type="text"/>
+        <input class="form-control" name="password" placeholder="Password" required="" type="password"/>
+        <button class="btn-submit" onclick=validCheck() type="submit">Login</button>
+    </form>
+</div>
+</body>
+</html>
