@@ -1,6 +1,5 @@
 package com.example.ldap.test;
 
-import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -38,8 +37,6 @@ public class LoginTest {
                 System.out.println("attributes: " + attrs);
             }
 
-        } catch (AuthenticationException ae) {
-            System.out.println("이거에러:" + ae);
         } catch (NamingException e) {
             e.printStackTrace();
         }
