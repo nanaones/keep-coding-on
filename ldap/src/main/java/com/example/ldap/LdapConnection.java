@@ -8,53 +8,53 @@ import java.util.Hashtable;
 
 public class LdapConnection {
 
-    private static DirContext ctx = null;
+
+    private static LdapConnection ldapconn = null;
     //    private String ldappass = "password";
     private final String LdapHost = "ldap://ldap.forumsys.com:389";
     private String searchBase = "dc=example, dc=com";
-    private String ldapUser = "";
-    private String ldapPass = "";
+    private static Hashtable<String, String> env;
+    private static DirContext ctx;
+    private String ldapUser = null;
+    private String ldapPass = null;
 
     private LdapConnection() {
-    }
-
-    public static DirContext getConnection(Hashtable<String, String> env) {
         try {
-            if (ctx == null) {
-                ctx = new InitialDirContext(env);
-            }
+            env = new Hashtable<>();
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+            env.put(Context.PROVIDER_URL, LdapHost);
+            env.put(Context.SECURITY_AUTHENTICATION, "simple");
+            ctx = new InitialDirContext(env);
+            System.out.println("Activate Directory Connected");
         } catch (NamingException e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
-        System.out.println("Active Directory Connected");
-        return ctx;
     }
 
-    public Hashtable<String, String> ldapLoginArguments(String uid, String pwd) {
-        ldapUser = uid;
-        ldapPass = pwd;
-        Hashtable<String, String> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, LdapHost);
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.SECURITY_PRINCIPAL, ldapUser + searchBase);
-        env.put(Context.SECURITY_CREDENTIALS, ldapPass);
-
-        return env;
+    public static LdapConnection getInstance() {
+        if (ldapconn == null) {
+            ldapconn = new LdapConnection();
+        }
+        return ldapconn;
     }
 
-    public Attributes searchUser() {
+    public Attributes ldapSearch(String username, String pwd) {
         Attributes attrs = null;
         try {
-            String searchFilter = "(&(objectClass=person)(" + ldapUser + "))";
+            ldapUser = "uid=" + username;
+            ldapPass = pwd;
+            env.put(Context.SECURITY_PRINCIPAL, ldapUser + searchBase);
+            env.put(Context.SECURITY_CREDENTIALS, ldapPass);
+            String searchFilter = String.format("(&(objectClass=person)(%s))", ldapUser);
             SearchControls ctls = new SearchControls();
-            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            NamingEnumeration<SearchResult> result = ctx.search(searchBase, searchFilter, ctls);
-            while (result.hasMoreElements()) {
-                SearchResult sr = result.next();
+            NamingEnumeration<SearchResult> results = ctx.search(searchBase, searchFilter, ctls);
+
+            while (results.hasMoreElements()) {
+                SearchResult sr = results.next();
                 attrs = sr.getAttributes();
-                System.out.println("attributes: " + attrs);
+                System.out.println("어트리뷰트: " + attrs);
             }
+            ctx.close();
         } catch (NamingException e) {
             e.printStackTrace();
         }
