@@ -21,11 +21,15 @@ class Baseball(IconScoreBase):
         super().on_update()
 
     # Ground
-    def join(self, address=Address):
+    def join(self, player=Address):
         pass
 
-    def check_members(self):
-        pass
+    def check_players_number(self, player=Address):
+        players_number = len(self._players)
+        if players_number == 2:
+            pass
+        else:
+            self._players.put(player)
 
     def check_game_status(self):
         pass
